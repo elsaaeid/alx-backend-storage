@@ -15,7 +15,7 @@ def count_requests(method: Callable) -> Callable:
     """Function for counting requests"""
     @wraps(method)
     def wrapper(url):  # sourcery skip: use-named-expression
-        """ Wrapper for decorator """
+        """Wrapper for decorator"""
         redis_.incr(f"count:{url}")
         cached_html = redis_.get(f"cached:{url}")
         if cached_html:
@@ -29,6 +29,6 @@ def count_requests(method: Callable) -> Callable:
 
 @count_requests
 def get_page(url: str) -> str:
-    """ Function that gets URL to Obtain HTML content"""
+    """Function that gets URL to obtain HTML content"""
     req = requests.get(url)
     return req.text
