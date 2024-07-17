@@ -49,7 +49,8 @@ def call_history(method: Callable) -> Callable:
 
 class Cache:
     """
-    Class for cache class and writing strings to Redis
+    Class for cache class and
+    writing strings to Redis
     """
     def __init__(self):
         """
