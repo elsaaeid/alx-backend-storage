@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Creating a cache class that writes string data type to Redis
+Module for creating a cache class that writes string data type to Redis
 """
-import functools
+from functools import wraps
 import redis
 from typing import Any, Callable, Union
 import uuid
@@ -13,7 +13,7 @@ def count_calls(method: Callable) -> Callable:
     Function that increments count and returns
     the function
     """
-    @functools.wraps(method)
+    @wraps(method)
     def wrapper_decorator(*args, **kwargs):
         """
         Function that increments count for key
@@ -29,9 +29,9 @@ def count_calls(method: Callable) -> Callable:
 
 def call_history(method: Callable) -> Callable:
     """
-    stores history of inputs and outputs for a method
+    Function that stores history of inputs and outputs for a method
     """
-    @functools.wraps(method)
+    @wraps(method)
     def wrapper_decorator(*args, **kwargs):
         """
         Function to create inputs and outputs lists
@@ -62,7 +62,7 @@ class Cache:
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
-        Takes in a data, generates an uuid to be used as a key
+        Function that takes in a data, generates an uuid to be used as a key
         storing data as input value and returns the key as a
         string
         """
@@ -76,7 +76,7 @@ class Cache:
                          Union[str, int, None]]
             = None) -> Union[str, int, None]:
         """
-        Takes in key, fn which is used to convert data back to desired format
+        Function that takes in key, fn which is used to convert data back to desired format
         """
         val = self._redis.get(key)
         if not val:
@@ -91,20 +91,20 @@ class Cache:
 
     def get_str(val: bytes) -> str:
         """
-        converts byte string representation to a str and returns it
+        Function that converts byte string representation to a str and returns it
         """
         return str(decoded)
 
     def get_int(self, val: bytes) -> int:
         """
-        converts byte string representation to an int and returns it
+        Function that converts byte string representation to an int and returns it
         """
         return int(val)
 
 
 def replay(cache: Cache, method: Callable) -> None:
     """
-    Display history of calls of a particular function
+    Function to display history of calls of a particular function
     """
     count_key = method.__qualname__
     inputs_key = method.__qualname__ + ":inputs"
