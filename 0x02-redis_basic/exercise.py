@@ -47,6 +47,21 @@ def call_history(method: Callable) -> Callable:
     return wrapper_decorator
 
 
+def replay(method: Callable) -> None:
+    """
+    Replays the history of calls of
+    a particular function
+    """
+    name = method.__qualname__
+    cache = redis.Redis()
+    calls = cache.get(name).decode("utf-8")
+    print("{} was called {} times:".format(name, calls))
+    inputs = cache.lrange(name + ":inputs", 0, -1)
+    outputs = cache.lrange(name + ":outputs", 0, -1)
+    for i, o in zip(inputs, outputs):
+        print("{}(*{}) -> {}".format(name, i.decode('utf-8'),
+                                     o.decode('utf-8')))
+
 class Cache:
     """
     Class for cache class and
@@ -101,24 +116,3 @@ class Cache:
         Function that converts byte string representation to an int and returns it
         """
         return int(key_value)
-
-
-def replay(cache: Cache, method: Callable) -> None:
-    """
-    Function to display history of calls of a particular function
-    """
-    count_key = method.__qualname__
-    inputs_key = method.__qualname__ + ":inputs"
-    outputs_key = method.__qualname__ + ":outputs"
-
-    count = cache._redis.get(count_key)
-    if count is None:
-        count = 0
-    else:
-        count = int(count)
-    print(f"{count_key} was called {count} times:")
-    for inputs, outputs in zip(cache._redis.lrange(inputs_key, 0, -1),
-                               cache._redis.lrange(outputs_key, 0, -1)):
-        inputs = inputs.decode('utf-8')
-        outputs = outputs.decode('utf-8')
-        print(f"{count_key}(*{inputs}) -> {outputs}")
