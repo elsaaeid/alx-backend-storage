@@ -73,21 +73,21 @@ class Cache:
         return key
 
     def get(self, key: str,
-            method: Callable[[Any],
+            fn: Callable[[Any],
                          Union[str, int, None]]
             = None) -> Union[str, int, None]:
         """
-        Function that takes in key, method is used to convert data to desired format
+        Function that takes in key, fn is used to convert data to desired format
         """
         key_value = self._redis.get(key)
         if not key_value:
             return None
-        if method == int:
+        if fn == int:
             key_value = self.get_int(key_value)
-        elif method == str:
+        elif fn == str:
             key_value = self.get_str(key_value)
-        elif method:
-            key_value = method(key_value)
+        elif fn:
+            key_value = fn(key_value)
         return key_value
 
     def get_str(key_value: bytes) -> str:
