@@ -73,34 +73,34 @@ class Cache:
         return key
 
     def get(self, key: str,
-            fn: Callable[[Any],
+            method: Callable[[Any],
                          Union[str, int, None]]
             = None) -> Union[str, int, None]:
         """
-        Function that takes in key, fn which is used to convert data back to desired format
+        Function that takes in key, method is used to convert data to desired format
         """
-        val = self._redis.get(key)
-        if not val:
+        key_value = self._redis.get(key)
+        if not key_value:
             return None
-        if fn == int:
-            val = self.get_int(val)
-        elif fn == str:
-            val = self.get_str(val)
-        elif fn:
-            val = fn(val)
-        return val
+        if method == int:
+            key_value = self.get_int(key_value)
+        elif method == str:
+            key_value = self.get_str(key_value)
+        elif method:
+            key_value = method(key_value)
+        return key_value
 
-    def get_str(val: bytes) -> str:
+    def get_str(key_value: bytes) -> str:
         """
         Function that converts byte string representation to a str and returns it
         """
         return str(decoded)
 
-    def get_int(self, val: bytes) -> int:
+    def get_int(self, key_value: bytes) -> int:
         """
         Function that converts byte string representation to an int and returns it
         """
-        return int(val)
+        return int(key_value)
 
 
 def replay(cache: Cache, method: Callable) -> None:
