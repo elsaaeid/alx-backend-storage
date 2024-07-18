@@ -77,7 +77,7 @@ class Cache:
                          Union[str, int, None]]
             = None) -> Union[str, int, None]:
         """
-        Function that takes in key, fn is used to convert data to desired format
+        Function that takes in key, fn is used to convert data back to desired format
         """
         key_value = self._redis.get(key)
         if not key_value:
